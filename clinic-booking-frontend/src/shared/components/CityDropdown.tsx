@@ -1,21 +1,28 @@
-import { useState } from 'react'
 
-const cities = ['New York', 'Los Angeles', 'Chicago', 'Houston']
 
-export default function CityDropdown() {
-  const [city, setCity] = useState(cities[0])
+interface CityDropdownProps {
+  cities: { id: string; name: string }[];
+  selectedCity: string;
+  onChange: (value: string) => void;
+}
 
+export default function CityDropdown({
+  cities,
+  selectedCity,
+  onChange,
+}: CityDropdownProps) {
   return (
     <select
-      value={city}
-      onChange={(e) => setCity(e.target.value)}
-      className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      value={selectedCity}
+      onChange={(e) => onChange(e.target.value)}
+      className="border rounded px-3 py-2"
     >
-      {cities.map((c) => (
-        <option key={c} value={c}>
-          {c}
+      <option value="">Select City</option>
+      {cities.map((city) => (
+        <option key={city.id} value={city.id}>
+          {city.name}
         </option>
       ))}
     </select>
-  )
+  );
 }

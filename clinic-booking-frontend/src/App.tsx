@@ -1,8 +1,8 @@
 import { Routes, Route } from "react-router-dom";
 import Dashboard from "./pages/index";
-import Home from "./pages/home";
-import Clinics from "./pages/Clinics";
-import Doctors from "./pages/Doctors";
+import Home from "./pages/dashboard";
+import Clinics from "./pages/clinics";
+import Doctors from "./pages/doctors";
 import Appointments from "./pages/appointments";
 
 function App() {

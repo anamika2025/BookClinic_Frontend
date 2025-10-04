@@ -4,6 +4,8 @@ export default function Topbar() {
   const [city, setCity] = useState("");
   const [search, setSearch] = useState("");
 
+  
+
   return (
     <header className="flex items-center justify-between bg-white p-4 shadow-sm">
       <div>
