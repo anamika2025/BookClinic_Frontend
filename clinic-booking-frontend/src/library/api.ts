@@ -10,14 +10,14 @@ export async function fetchDoctors(clinicId?: string) {
   return fetch(`/api/doctors${clinicId ? `?clinic=${clinicId}` : ""}`).then(res => res.json());
 }
 
-export async function fetchAppointments(filters: any) {
-  const params = new URLSearchParams(filters as any);
+export async function fetchAppointments(filters: unknown) {
+  const params = new URLSearchParams(filters as unknown as Record<string, string>).toString();
   const res = await fetch(`/api/appointments?${params}`);
   return res.json();
 }
 
 
-export async function createAppointment(data: any) {
+export async function createAppointment(data: unknown) {
   return fetch("/api/appointments", {
     method: "POST",
     headers: { "Content-Type": "application/json" },

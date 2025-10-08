@@ -23,6 +23,9 @@ export default function Sidebar() {
         <Link className={isActive("/appointments")} to="/appointments">
           Appointments
         </Link>
+        <Link className={isActive("/clinic-registration")} to="/clinic-registration">
+          Clinic Registration
+        </Link>
       </nav>
     </aside>
   );
