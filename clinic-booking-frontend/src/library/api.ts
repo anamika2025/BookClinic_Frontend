@@ -1,3 +1,9 @@
+import type { ClinicTiming } from '@/pages/type';
+import axios from 'axios';
+
+
+const API_BASE = '/api/ClinicTimings';
+
 export async function fetchCities() {
   return fetch("/api/cities").then(res => res.json());
 }
@@ -24,3 +30,16 @@ export async function createAppointment(data: unknown) {
     body: JSON.stringify(data)
   }).then(res => res.json());
 }
+
+
+export const fetchClinicTimings = (clinicId: number) =>
+  axios.get<ClinicTiming[]>(`${API_BASE}/${clinicId}`);
+
+export const createClinicTiming = (data: ClinicTiming) =>
+  axios.post(API_BASE, data);
+
+export const updateClinicTiming = (id: number, data: ClinicTiming) =>
+  axios.put(`${API_BASE}/${id}`, data);
+
+export const deleteClinicTiming = (id: number) =>
+  axios.delete(`${API_BASE}/${id}`);
