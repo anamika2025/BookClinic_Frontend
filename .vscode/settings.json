@@ -1,0 +1,14 @@
+{
+  // ✅ Automatically format files on save
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+
+  // ✅ Use Prettier for JS, TS, JSON, and HTML
+  "[javascript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[typescript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[json]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[html]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+
+  // ✅ Set terminal default path
+  "terminal.integrated.cwd": "F:\\GitHub\\GitHub\\BookClinic_Frontend\\clinic-booking-frontend"
+}

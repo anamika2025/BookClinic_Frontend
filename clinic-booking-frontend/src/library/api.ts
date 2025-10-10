@@ -35,7 +35,7 @@ export async function createAppointment(data: unknown) {
 export const fetchClinicTimings = (clinicId: number) =>
   axios.get<ClinicTiming[]>(`${API_BASE}/${clinicId}`);
 
-export const createClinicTiming = (data: ClinicTiming) =>
+export const addClinicTiming = (data: ClinicTiming) =>
   axios.post(API_BASE, data);
 
 export const updateClinicTiming = (id: number, data: ClinicTiming) =>

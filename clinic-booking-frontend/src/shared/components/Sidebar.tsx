@@ -4,8 +4,7 @@ export default function Sidebar() {
   const location = useLocation();
 
   // Simple active class helper
-  const isActive = (path: string) =>
-    location.pathname === path ? "font-bold text-blue-600" : "text-gray-700";
+  const isActive = (path: string) => (location.pathname === path ? "font-bold text-blue-600" : "text-gray-700");
 
   return (
     <aside className="w-64 bg-white shadow-md min-h-screen p-6 flex flex-col">
@@ -25,6 +24,9 @@ export default function Sidebar() {
         </Link>
         <Link className={isActive("/clinic-registration")} to="/clinic-registration">
           Clinic Registration
+        </Link>
+        <Link className={isActive("/clinic-form")} to="/clinic-form">
+          Clinic Form
         </Link>
       </nav>
     </aside>

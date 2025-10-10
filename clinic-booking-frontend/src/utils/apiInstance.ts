@@ -1,33 +1,76 @@
-import axios, { type AxiosResponse } from 'axios';
+// src/library/apiInstance.ts
 
 /**
- * Wrapper for GET requests
+ * Get authorization headers (if token exists)
+ */
+const getAuthHeaders = (): Record<string, string> => {
+  const token = localStorage.getItem("token");
+  return token ? { Authorization: `Bearer ${token}` } : {};
+};
+
+/**
+ * Handle API responses
+ */
+const handleResponse = async <T>(response: Response): Promise<T> => {
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(errorText || "API request failed");
+  }
+  return response.json() as Promise<T>;
+};
+
+const buildHeaders = (): Record<string, string> => {
+  const token = localStorage.getItem("token");
+  return {
+    "Content-Type": "application/json",
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+};
+
+/**
+ * Generic GET
  */
 export const apiGet = async <T>(url: string): Promise<T> => {
-  const response: AxiosResponse<T> = await axios.get(url);
-  return response.data;
+  const headers: HeadersInit = {
+    "Content-Type": "application/json",
+    ...getAuthHeaders(),
+  };
+  const response = await fetch(`/api${url}`, {
+    // <-- Use the full backend URL
+    method: "GET",
+    headers,
+  });
+  return handleResponse(response);
 };
 
 /**
- * Wrapper for POST requests
+ * Generic PUT
  */
-export const apiPost = async <T>(url: string, data: unknown): Promise<T> => {
-  const response: AxiosResponse<T> = await axios.post(url, data);
-  return response.data;
+export const apiPut = async <T>(url: string, body: unknown): Promise<T> => {
+  const response = await fetch(url, {
+    method: "PUT",
+    headers: buildHeaders(),
+    body: JSON.stringify(body),
+  });
+  return handleResponse<T>(response);
 };
 
 /**
- * Wrapper for PUT requests
+ * Generic DELETE
  */
-export const apiPut = async <T >(url: string, data: unknown): Promise<T> => {
-  const response: AxiosResponse<T> = await axios.put(url, data);
-  return response.data;
+export const apiPost = async <T>(url: string, body: unknown): Promise<T> => {
+  const response = await fetch(url, {
+    method: "POST",
+    headers: buildHeaders(),
+    body: JSON.stringify(body),
+  });
+  return handleResponse<T>(response);
 };
 
-/**
- * (Optional) Wrapper for DELETE requests
- */
 export const apiDelete = async <T>(url: string): Promise<T> => {
-  const response: AxiosResponse<T> = await axios.delete(url);
-  return response.data;
+  const response = await fetch(url, {
+    method: "DELETE",
+    headers: buildHeaders(),
+  });
+  return handleResponse<T>(response);
 };
