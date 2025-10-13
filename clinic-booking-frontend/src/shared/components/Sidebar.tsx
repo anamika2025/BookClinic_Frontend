@@ -22,11 +22,23 @@ export default function Sidebar() {
         <Link className={isActive("/appointments")} to="/appointments">
           Appointments
         </Link>
-        <Link className={isActive("/clinic-registration")} to="/clinic-registration">
+        <Link className={isActive("/clinic-form")} to="/clinic-form">
           Clinic Registration
         </Link>
-        <Link className={isActive("/clinic-form")} to="/clinic-form">
-          Clinic Form
+        <Link className={isActive("/clinic-list")} to="/clinic-list">
+          Registered Clinic
+        </Link>
+        <Link className={isActive("/clinictiming-form")} to="/clinictiming-form">
+          Set Clinic Timing
+        </Link>
+        <Link className={isActive("/clinictiming-list")} to="/clinictiming-list">
+          Clinic Timing Details
+        </Link>
+        <Link className={isActive("/doctor-form")} to="/doctor-form">
+          Doctor Registration
+        </Link>
+        <Link className={isActive("/doctor-list")} to="/doctor-list">
+          Registered Doctors
         </Link>
       </nav>
     </aside>

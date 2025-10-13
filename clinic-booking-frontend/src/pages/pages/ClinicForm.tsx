@@ -1,47 +1,51 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { addClinic, updateClinic } from "@/library/clinicApi";
-import { getCities } from "@/library/cityApi";
-import type { Clinic, City, ClinicFormProps } from "@/pages/types/types";
+import { addClinic, updateClinic, getCities, getClinicById } from "@/library/clinicApi";
+import type { Clinic, City } from "@/pages/types/types";
 
-export default function ClinicForm({ clinic, onClose }: ClinicFormProps) {
+export default function ClinicForm() {
+  const { clinicId } = useParams<{ clinicId: string }>();
+  const navigate = useNavigate();
   const [form, setForm] = useState<Omit<Clinic, "clinicId">>({
     clinicName: "",
     clinicAddress: "",
-    cityId: 0,
-    stateId: 0,
+    cityId: null,
     contactNumber: 0,
     status: "Active",
   });
   const [cities, setCities] = useState<City[]>([]);
-  const [isEdit, setIsEdit] = useState(!!clinic);
+  const idToEdit = clinicId ? parseInt(clinicId) : null;
+  const isEdit = !!idToEdit;
 
   useEffect(() => {
-    loadCities();
-    if (clinic) {
-      setForm({
-        clinicName: clinic.clinicName,
-        clinicAddress: clinic.clinicAddress,
-        cityId: clinic.cityId,
-        stateId: clinic.stateId,
-        contactNumber: clinic.contactNumber,
-        status: clinic.status,
-      });
-    }
-  }, [clinic]);
-
-  const loadCities = async () => {
-    try {
-      const data = await getCities();
-      setCities(data);
-    } catch (error) {
-      console.error("Error loading cities:", error);
-    }
-  };
+    const loadData = async () => {
+      try {
+        const data = await getCities();
+        setCities(data);
+        if (idToEdit) {
+          const clinic = await getClinicById(idToEdit);
+          if (clinic) {
+            setForm({
+              clinicName: clinic.clinicName,
+              clinicAddress: clinic.clinicAddress,
+              cityId: clinic.cityId ?? null,
+              contactNumber: clinic.contactNumber ?? 0,
+              status: clinic.status,
+            });
+          }
+        }
+      } catch (error) {
+        console.error("Error loading data:", error);
+        alert("Failed to load data");
+      }
+    };
+    loadData();
+  }, [idToEdit]);
 
   const handleSave = async () => {
     if (!form.clinicName.trim()) {
@@ -49,31 +53,37 @@ export default function ClinicForm({ clinic, onClose }: ClinicFormProps) {
       return;
     }
     try {
-      if (isEdit && clinic?.clinicId) {
-        await updateClinic(clinic.clinicId, form);
+      const payload = {
+        // ...form,
+        clinicId: idToEdit ?? undefined,
+        clinicName: form.clinicName,
+        clinicAddress: form.clinicAddress,
+        cityId: form.cityId,
+        contactNumber: form.contactNumber ?? 0,
+        status: form.status,
+        // cityId: form.cityId ?? null,
+      };
+      console.log("Saving with ID:", idToEdit, payload);
+      if (isEdit && idToEdit) {
+        await updateClinic(idToEdit, payload);
         alert("Clinic updated successfully!");
       } else {
-        await addClinic(form);
+        await addClinic(payload);
         alert("Clinic added successfully!");
       }
-      setForm({
-        clinicName: "",
-        clinicAddress: "",
-        cityId: 0,
-        stateId: 0,
-        contactNumber: 0,
-        status: "Active",
-      });
-      setIsEdit(false);
-      if (onClose) onClose();
+      navigate("/clinic-list");
     } catch (error) {
       console.error("Error saving clinic:", error);
       alert("Failed to save clinic");
     }
   };
 
+  const handleCancel = () => {
+    navigate("/clinic-list");
+  };
+
   return (
-    <div className="max-w-xl mx-auto mt-10 bg-white p-6 rounded-2xl shadow-md">
+    <div className="p-6">
       <h2 className="text-2xl font-semibold mb-4">{isEdit ? "Edit Clinic" : "Add Clinic"}</h2>
       <div className="space-y-4">
         <div>
@@ -88,12 +98,17 @@ export default function ClinicForm({ clinic, onClose }: ClinicFormProps) {
           <Label className="block mb-1 font-medium">City</Label>
           <select
             className="border rounded-md w-full p-2"
-            value={form.cityId}
-            onChange={(e) => setForm({ ...form, cityId: parseInt(e.target.value) })}
+            value={form.cityId?.toString() ?? ""} // Convert to string or empty string
+            onChange={(e) =>
+              setForm({
+                ...form,
+                cityId: e.target.value ? parseInt(e.target.value) : null,
+              })
+            }
           >
-            <option value={0}>Select City</option>
+            <option value="">Select City</option>
             {cities.map((city) => (
-              <option key={city.cityId} value={city.cityId}>
+              <option key={city.cityId} value={city.cityId.toString()}>
                 {city.cityName}
               </option>
             ))}
@@ -105,16 +120,30 @@ export default function ClinicForm({ clinic, onClose }: ClinicFormProps) {
             type="tel"
             pattern="[0-9]*"
             placeholder="Enter contact number"
-            value={form.contactNumber}
-            onChange={(e) => setForm({ ...form, contactNumber: Number(e.target.value) })}
+            value={form.contactNumber?.toString() ?? ""}
+            onChange={(e) =>
+              setForm({
+                ...form,
+                contactNumber: e.target.value ? parseInt(e.target.value) : null,
+              })
+            }
           />
         </div>
         <div className="flex items-center space-x-2">
-          <Checkbox id="terms" />
-          <Label htmlFor="terms">Status</Label>
+          <Checkbox
+            id="status"
+            checked={form.status === "Active"}
+            onCheckedChange={(checked) => setForm({ ...form, status: checked ? "Active" : "Inactive" })}
+          />
+          <Label htmlFor="status">Active</Label>
         </div>
-        <div className="flex justify-end pt-4">
-          <Button onClick={handleSave}>{isEdit ? "Update Clinic" : "Save Clinic"}</Button>
+        <div className="flex justify-end pt-4 space-x-2">
+          <Button variant="outline" onClick={handleCancel}>
+            Cancel
+          </Button>
+          <Button className="items-center mb-4 bg-gray-50 p-3 rounded-md border border-gray-200" onClick={handleSave}>
+            {isEdit ? "Update Clinic" : "Save Clinic"}
+          </Button>
         </div>
       </div>
     </div>
