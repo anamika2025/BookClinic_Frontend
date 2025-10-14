@@ -76,3 +76,5 @@ export interface ClinicTiming {
   openingTime: string;
   closingTime: string;
 }
+
+

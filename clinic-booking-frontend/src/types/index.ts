@@ -9,8 +9,9 @@ export interface Clinic {
 }
 
 export interface Doctor {
-  doctorID: number;
+  id: number;
   name: string;
   specialty: string;
-  clinicID: number;
+  city: string;
 }
+

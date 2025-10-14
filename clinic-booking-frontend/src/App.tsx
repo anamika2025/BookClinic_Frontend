@@ -16,6 +16,8 @@ import DoctorForm from "./pages/pages/DoctorForm";
 import DoctorList from "./pages/components/doctors/DoctorList";
 import ClinicTimingForm from "./pages/pages/ClinicTimingForm";
 import ClinicTimingList from "./pages/components/clinics/ClinicTimingList";
+import DoctorSlotForm from "./pages/pages/DoctorSlotBookingForm";
+import DoctorSlotList from "./pages/components/doctors/DoctorSlotBookingList";
 // import ClinicTimingsPage from "./pages/Clinic/clinic/ClinicTimingsPage";
 
 function App() {
@@ -36,6 +38,9 @@ function App() {
         <Route path="/clinictiming-form" element={<ClinicTimingForm />} />
         <Route path="/clinic-timing-form/:id" element={<ClinicTimingForm />} />
         <Route path="/clinictiming-list" element={<ClinicTimingList />} />
+        <Route path="/doctor-slot-form" element={<DoctorSlotForm />} />
+        <Route path="/doctor-slot-form/:id" element={<DoctorSlotForm />} />
+        <Route path="/doctor-slot-list" element={<DoctorSlotList />} />
 
         {/* <Route path="/clinic-registration" element={<ClinicPage />} />
          <Route path="/clinic-timings" element={<ClinicTimingsPage />} /> */}

@@ -50,3 +50,16 @@ export interface ClinicTimingFormProps {
   clinicTiming?: Omit<ClinicTiming, "clinicTimingId"> & { clinicTimingId: number };
   onClose?: () => void;
 }
+
+export interface DoctorSlot {
+  slotId: number;
+  doctorId: number;
+  dayOfWeek: number;
+  fromTime: string;
+  toTime: string;
+}
+
+export interface DoctorSlotFormProps {
+  doctorSlot?: Omit<DoctorSlot, "slotId"> & { slotId: number };
+  onClose?: () => void;
+}

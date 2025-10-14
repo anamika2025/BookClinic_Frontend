@@ -40,6 +40,12 @@ export default function Sidebar() {
         <Link className={isActive("/doctor-list")} to="/doctor-list">
           Registered Doctors
         </Link>
+        <Link className={isActive("/doctor-slot-form")} to="/doctor-slot-form">
+          Doctor Slot Booking
+        </Link>
+        <Link className={isActive("/doctor-slot-list")} to="/doctor-slot-list">
+          Booked Slots
+        </Link>
       </nav>
     </aside>
   );

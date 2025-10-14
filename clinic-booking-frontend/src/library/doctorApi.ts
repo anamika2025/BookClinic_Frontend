@@ -1,6 +1,6 @@
-import type { Doctor } from "@/pages/types/types";
+import type { Doctor, DoctorSlot } from "@/pages/types/types";
 
-const API_BASE_URL = "/api/doctors"; // change this to your actual API base URL
+const API_BASE_URL = "/api/doctors"; 
 
 export async function getDoctors(): Promise<Doctor[]> {
   const res = await fetch(API_BASE_URL);
@@ -48,4 +48,53 @@ export async function deleteDoctor(id: number): Promise<void> {
     method: "DELETE",
   });
   if (!res.ok) throw new Error("Failed to delete doctor");
+}
+
+
+const API_BASE = "/api/doctorSlots";
+
+export async function getDoctorSlots(): Promise<DoctorSlot[]> {
+  const res = await fetch(API_BASE);
+  if (!res.ok) throw new Error("Failed to fetch doctor slots");
+  return res.json();
+}
+
+export async function getDoctorSlotById(id: number): Promise<DoctorSlot> {
+  const res = await fetch(`${API_BASE}/${id}`);
+  if (!res.ok) throw new Error("Failed to fetch doctor slot");
+  return res.json();
+}
+
+export async function addDoctorSlot(data: DoctorSlot): Promise<void> {
+  const res = await fetch(API_BASE, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) {
+    const error = await res.text();
+    throw new Error(error || "Failed to add doctor slot");
+  }
+}
+
+export async function updateDoctorSlot(id: number, payload: DoctorSlot): Promise<void> {
+  const res = await fetch(`${API_BASE}/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(errText || "Failed to update doctor slot");
+  }
+}
+
+export async function deleteDoctorSlot(id: number): Promise<void> {
+  const res = await fetch(`${API_BASE}/${id}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(errText || "Failed to delete doctor slot");
+  }
 }
