@@ -1,42 +1,60 @@
 "use client";
-import { useEffect, useState } from "react";
+
+import { useEffect, useState, useCallback } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import type { SlotInfo } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import { fetchAppointments } from "@/library/api";
+
+import { fetchAppointments } from "@/library/appointmentsApi";
 import AppointmentDialog from "@/shared/components/AppointmentDialog";
+import type { AppointmentResponse } from "@/pages/types/types";
 
 const localizer = momentLocalizer(moment);
+
+interface CalendarEvent {
+  id: number;
+  title: string;
+  start: Date;
+  end: Date;
+  status: string;
+}
 
 interface AppointmentCalendarProps {
   filters: {
     city?: string;
-    // Add other filter fields here
+    clinicId: number;
+    doctorId: number;
   };
 }
 
-
- const AppointmentCalendar = ({ filters }: AppointmentCalendarProps) => {
-  const [appointments, setAppointments] = useState<any[]>([]);
+const AppointmentCalendar = ({ filters }: AppointmentCalendarProps) => {
+  const [appointments, setAppointments] = useState<CalendarEvent[]>([]);
   const [slot, setSlot] = useState<SlotInfo | null>(null);
   const [open, setOpen] = useState(false);
 
-  const loadAppointments = async () => {
-    const data = await fetchAppointments(filters);
-    const mapped = data.map((a: any) => ({
-      id: a.AppointmentID,
-      title: `${a.Status} - Dr.${a.DoctorName}`,
-      start: new Date(`${a.AppointmentDate}T${a.StartTime}`),
-      end: new Date(`${a.AppointmentDate}T${a.EndTime}`),
-      status: a.Status,
+  const loadAppointments = useCallback(async () => {
+    if (!filters.clinicId || !filters.doctorId) return;
+
+    const data: AppointmentResponse[] = await fetchAppointments({
+      clinicId: filters.clinicId,
+      doctorId: filters.doctorId,
+    });
+
+    const mapped: CalendarEvent[] = data.map((a) => ({
+      id: a.appointmentId,
+      title: `${a.status} - Dr. ${a.doctorName}`,
+      start: new Date(`${a.appointmentDate}T${a.startTime}`),
+      end: new Date(`${a.appointmentDate}T${a.endTime}`),
+      status: a.status,
     }));
+
     setAppointments(mapped);
-  };
+  }, [filters]);
 
   useEffect(() => {
     loadAppointments();
-  }, [filters]);
+  }, [loadAppointments]);
 
   return (
     <div>
@@ -64,9 +82,11 @@ interface AppointmentCalendarProps {
         setOpen={setOpen}
         slot={slot}
         refresh={loadAppointments}
+        doctorId={filters.doctorId}
+        clinicId={filters.clinicId}
       />
     </div>
   );
-}
+};
 
 export default AppointmentCalendar;

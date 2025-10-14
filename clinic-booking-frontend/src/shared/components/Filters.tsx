@@ -2,63 +2,91 @@
 import { useEffect, useState } from "react";
 import { fetchCities, fetchClinics, fetchDoctors } from "@/library/api";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
+import type { Doctor, Clinic, City } from "@/pages/types/types";
 
-export function Filters({ onChange }: { onChange: (filters: any) => void }) {
-  const [cities, setCities] = useState<any[]>([]);
-  const [clinics, setClinics] = useState<any[]>([]);
-  const [doctors, setDoctors] = useState<any[]>([]);
+interface FiltersProps {
+  onChange: (filters: { cityId?: string; clinicId?: string; doctorId?: string }) => void;
+}
 
+export function Filters({ onChange }: FiltersProps) {
+  const [cities, setCities] = useState<City[]>([]);
+  const [clinics, setClinics] = useState<Clinic[]>([]);
+  const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [selectedCity, setSelectedCity] = useState<string>();
   const [selectedClinic, setSelectedClinic] = useState<string>();
   const [selectedDoctor, setSelectedDoctor] = useState<string>();
 
   useEffect(() => {
-    fetchCities().then(setCities);
+    fetchCities().then(setCities).catch(console.error);
   }, []);
 
   useEffect(() => {
-    if (selectedCity) fetchClinics(selectedCity).then(setClinics);
+    if (selectedCity) {
+      fetchClinics(selectedCity).then(setClinics).catch(console.error);
+    } else {
+      setClinics([]);
+      setSelectedClinic(undefined);
+      setSelectedDoctor(undefined);
+    }
   }, [selectedCity]);
 
   useEffect(() => {
-    if (selectedClinic) fetchDoctors(selectedClinic).then(setDoctors);
+    if (selectedClinic) {
+      fetchDoctors(selectedClinic).then(setDoctors).catch(console.error);
+    } else {
+      setDoctors([]);
+      setSelectedDoctor(undefined);
+    }
   }, [selectedClinic]);
 
   useEffect(() => {
-    onChange({ cityId: selectedCity, clinicId: selectedClinic, doctorId: selectedDoctor });
-  }, [selectedCity, selectedClinic, selectedDoctor]);
+    onChange({
+      cityId: selectedCity,
+      clinicId: selectedClinic,
+      doctorId: selectedDoctor,
+    });
+  }, [selectedCity, selectedClinic, selectedDoctor, onChange]);
 
   return (
     <div className="flex gap-4 mb-4">
-      <Select onValueChange={setSelectedCity}>
+      {/* City Select */}
+      <Select value={selectedCity} onValueChange={setSelectedCity}>
         <SelectTrigger className="w-48">
           <SelectValue placeholder="Select City" />
         </SelectTrigger>
         <SelectContent>
-          {cities.map((c) => (
-            <SelectItem key={c.CityID} value={c.CityID.toString()}>{c.CityName}</SelectItem>
+          {cities.map((city) => (
+            <SelectItem key={city.cityId} value={city.cityId.toString()}>
+              {city.cityName}
+            </SelectItem>
           ))}
         </SelectContent>
       </Select>
 
-      <Select onValueChange={setSelectedClinic}>
+      {/* Clinic Select */}
+      <Select value={selectedClinic} onValueChange={setSelectedClinic} disabled={!selectedCity}>
         <SelectTrigger className="w-48">
           <SelectValue placeholder="Select Clinic" />
         </SelectTrigger>
         <SelectContent>
-          {clinics.map((cl) => (
-            <SelectItem key={cl.ClinicID} value={cl.ClinicID}>{cl.ClinicName}</SelectItem>
+          {clinics.map((clinic) => (
+            <SelectItem key={clinic.clinicId} value={clinic.clinicName.toString()}>
+              {clinic.clinicName}
+            </SelectItem>
           ))}
         </SelectContent>
       </Select>
 
-      <Select onValueChange={setSelectedDoctor}>
+      {/* Doctor Select */}
+      <Select value={selectedDoctor} onValueChange={setSelectedDoctor} disabled={!selectedClinic}>
         <SelectTrigger className="w-48">
           <SelectValue placeholder="Select Doctor" />
         </SelectTrigger>
         <SelectContent>
-          {doctors.map((d) => (
-            <SelectItem key={d.DoctorID} value={d.DoctorID}>{d.DoctorName}</SelectItem>
+          {doctors.map((doctor) => (
+            <SelectItem key={doctor.doctorId} value={doctor.doctorName.toString()}>
+              {doctor.doctorName}
+            </SelectItem>
           ))}
         </SelectContent>
       </Select>

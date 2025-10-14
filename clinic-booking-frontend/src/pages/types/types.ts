@@ -63,3 +63,45 @@ export interface DoctorSlotFormProps {
   doctorSlot?: Omit<DoctorSlot, "slotId"> & { slotId: number };
   onClose?: () => void;
 }
+
+export interface AppointmentRequest {
+  doctorId: number;
+  clinicId: number;
+  startTime: string;
+  endTime: string;
+  userId?: string;
+  status?: string;
+}
+
+export interface AppointmentResponse {
+  appointmentId: number;
+  doctorId: number;
+  clinicId: number;
+  startTime: string;
+  endTime: string;
+  appointmentDate: string;
+  doctorName: string;
+  userId?: string;
+  status: string;
+}
+
+
+export interface CalendarEvent {
+  id: number;
+  title: string;
+  start: Date;
+  end: Date;
+  status: string;
+}
+
+export interface FetchAppointmentsParams {
+  clinicId: number;
+  doctorId: number;
+}
+
+
+export interface Filter {
+  city?: string;
+  clinicId: number;
+  doctorId: number;
+}

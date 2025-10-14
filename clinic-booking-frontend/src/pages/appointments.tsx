@@ -12,13 +12,18 @@ interface City {
 
 interface Filter {
   city?: string;
-  // other filter fields
+   clinicId: number;
+  doctorId: number;
 }
 
 export default function Appointments() {
   const [cities, setCities] = useState<City[]>([]);
   const [selectedCity, setSelectedCity] = useState<string>("");
-  const [filters, setFilters] = useState<Filter>({});
+  const [filters, setFilters] = useState<Filter>({
+      city: "NYC",         // optional
+  clinicId: 1,         // required
+  doctorId: 42,  
+  });
 
   useEffect(() => {
     fetchCities().then(setCities).catch(console.error);
