@@ -19,13 +19,13 @@ export const fetchAvailableSlots = async (filters: { city?: string }) => {
 };
 
 export const createAppointment = async (appointmentData: AppointmentRequest) => {
-  const token = localStorage.getItem("abcdef12345");
+  // const token = localStorage.getItem("abcdef12345");
 
-  const response = await fetch("https://localhost:7197/api/appointments", {
+  const response = await fetch("/api/appointments", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
+      // Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(appointmentData),
     credentials: "include",
