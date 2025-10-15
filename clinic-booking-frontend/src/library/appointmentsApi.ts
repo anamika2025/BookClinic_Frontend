@@ -1,5 +1,4 @@
-import type { AppointmentRequest } from "@/pages/types/types";
-import type { Clinic, Doctor } from "@/types";
+import type { AppointmentRequest, Clinic, Doctor } from "@/pages/types/types";
 
 // // Fetch appointments
 // export const fetchAppointments = async (filters: { city?: string }) => {
@@ -19,51 +18,56 @@ export const fetchAvailableSlots = async (filters: { city?: string }) => {
   return response.json();
 };
 
+export const createAppointment = async (appointmentData: AppointmentRequest) => {
+  const token = localStorage.getItem("abcdef12345");
 
-export const createAppointment = async (appointment: AppointmentRequest) => {
-  const response = await fetch("/api/appointments", {
+  const response = await fetch("https://localhost:7197/api/appointments", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify(appointment),
+    body: JSON.stringify(appointmentData),
+    credentials: "include",
   });
 
   if (!response.ok) {
     throw new Error("Failed to create appointment");
   }
 
-  return response.json();
+  return await response.json();
 };
 
-
-export const fetchAppointments = async ({
-  clinicId,
-  doctorId,
-}: {
-  clinicId: number;
-  doctorId: number;
-}) => {
+export const fetchAppointments = async ({ clinicId, doctorId }: { clinicId: number; doctorId: number }) => {
   const response = await fetch(`/api/appointments/${clinicId}/${doctorId}`);
   if (!response.ok) throw new Error("Failed to fetch appointments");
   return response.json();
 };
 
 export const fetchDoctors = async (): Promise<Doctor[]> => {
-  const response = await fetch("/api/doctors");
-  if (!response.ok) {
-    throw new Error("Failed to fetch doctors");
-  }
-  return await response.json();
+  const res = await fetch("/api/Doctors");
+  const data: Doctor[] = await res.json();
+
+  return data.map((d) => ({
+    doctorId: d.doctorId,
+    doctorName: d.doctorName,
+    clinicId: d.clinicId,
+    careSpecialization: d.careSpecialization,
+    cityId: d.cityId,
+    status: d.status,
+  }));
 };
 
 export const fetchClinics = async (): Promise<Clinic[]> => {
-  const response = await fetch("/api/clinics");
-  if (!response.ok) {
-    throw new Error("Failed to fetch clinics");
-  }
-  return await response.json();
+  const res = await fetch("/api/Clinics");
+  const data: Clinic[] = await res.json();
+
+  return data.map((c) => ({
+    clinicId: c.clinicId,
+    clinicName: c.clinicName,
+    clinicAddress: c.clinicAddress,
+    cityId: c.cityId,
+    contactNumber: c.contactNumber,
+    status: c.status,
+  }));
 };
-
-
-
