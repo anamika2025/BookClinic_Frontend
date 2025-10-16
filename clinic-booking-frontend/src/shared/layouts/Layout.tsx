@@ -26,13 +26,13 @@ export default function Layout() {
           {searchResults.length > 0 ? (
             <div>
               <h2>Search Results:</h2>
-              <ul>
+              {/* <ul>
                 {searchResults.map((result) => (
                   <li key={result.id}>
                     {result.name} - {result.specialty} ({result.city})
                   </li>
                 ))}
-              </ul>
+              </ul> */}
             </div>
           ) : (
             <Outlet />

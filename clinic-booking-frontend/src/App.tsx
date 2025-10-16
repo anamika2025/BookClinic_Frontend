@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import Dashboard from "./pages/index";
-import Home from "./pages/dashboard";
+// import Home from "./pages/dashboard";
 import Clinics from "./pages/clinics";
 import Doctors from "./pages/doctors";
 import Appointments from "./pages/appointments";
@@ -18,6 +18,8 @@ import ClinicTimingForm from "./pages/pages/ClinicTimingForm";
 import ClinicTimingList from "./pages/components/clinics/ClinicTimingList";
 import DoctorSlotForm from "./pages/pages/DoctorSlotBookingForm";
 import DoctorSlotList from "./pages/components/doctors/DoctorSlotBookingList";
+import LoginForm from "./pages/pages/LoginForm";
+import RegisterForm from "./pages/pages/RegisterForm";
 // import ClinicTimingsPage from "./pages/Clinic/clinic/ClinicTimingsPage";
 
 function App() {
@@ -25,7 +27,7 @@ function App() {
     <Routes>
       <Route element={<Layout />}>
         <Route path="/" element={<Dashboard />} />
-        <Route path="/home" element={<Home />} />
+        {/* <Route path="/home" element={<Home />} /> */}
         <Route path="/clinics" element={<Clinics />} />
         <Route path="/doctors" element={<Doctors />} />
         <Route path="/appointments" element={<Appointments />} />
@@ -41,6 +43,8 @@ function App() {
         <Route path="/doctor-slot-form" element={<DoctorSlotForm />} />
         <Route path="/doctor-slot-form/:id" element={<DoctorSlotForm />} />
         <Route path="/doctor-slot-list" element={<DoctorSlotList />} />
+          <Route path="/login" element={<LoginForm />} />
+          <Route path="/register" element={<RegisterForm />} />
 
         {/* <Route path="/clinic-registration" element={<ClinicPage />} />
          <Route path="/clinic-timings" element={<ClinicTimingsPage />} /> */}

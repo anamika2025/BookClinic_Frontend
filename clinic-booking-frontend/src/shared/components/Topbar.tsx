@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 type TopbarProps = {
   onSearch: (params: { city: string; query: string }) => void;
@@ -28,7 +29,7 @@ export default function Topbar({ onSearch }: TopbarProps) {
 
   return (
     <header className="flex items-center justify-between bg-white p-4 shadow-sm">
-      <div>
+       <div className="flex items-center gap-4">
         <select
           value={city}
           onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setCity(e.target.value)}
@@ -40,7 +41,7 @@ export default function Topbar({ onSearch }: TopbarProps) {
             </option>
           ))}
         </select>
-      </div>
+     
       <form onSubmit={handleSearch} className="flex items-center gap-2">
         <input
           type="search"
@@ -55,7 +56,20 @@ export default function Topbar({ onSearch }: TopbarProps) {
         >
           Search
         </button>
+
       </form>
+       </div>
+        <div className="flex items-center gap-3">
+        <Link to="/login">
+          <button className="text-blue-600 hover:underline">Login</button>
+        </Link>
+        <Link to="/register">
+          <button className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700">
+            Register
+          </button>
+        </Link>
+      </div>
+      
     </header>
   );
 }

@@ -85,7 +85,6 @@ export interface AppointmentResponse {
   status: string;
 }
 
-
 export interface CalendarEvent {
   id: number;
   title: string;
@@ -99,9 +98,33 @@ export interface FetchAppointmentsParams {
   doctorId: number;
 }
 
-
 export interface Filter {
   city?: string;
   clinicId: number;
   doctorId: number;
+}
+
+export type RegisterRequest = {
+  userId?: number;
+  userName: string;
+  email: string;
+  password: string;
+  role: "Clinic" | "Doctor" | "Patient" | string;
+  status?: string;
+  cityId?: number;
+};
+
+export type LoginRequest = {
+  email: string;
+  password: string;
+};
+
+export interface AuthResponse {
+  token: string;
+  user: {
+    id: string;
+    userName: string;
+    email: string;
+    role: "Patient" | "Clinic" | "Doctor";
+  };
 }

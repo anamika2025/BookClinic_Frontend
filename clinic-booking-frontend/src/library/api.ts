@@ -43,3 +43,6 @@ export const updateClinicTiming = (id: number, data: ClinicTiming) =>
 
 export const deleteClinicTiming = (id: number) =>
   axios.delete(`${API_BASE}/${id}`);
+
+
+
