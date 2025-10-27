@@ -18,14 +18,7 @@ interface AppointmentDialogProps {
   clinicId: number;
 }
 
-export default function AppointmentDialog({
-  open,
-  setOpen,
-  slot,
-  refresh,
-}: // doctorId,
-// clinicId,
-AppointmentDialogProps) {
+export default function AppointmentDialog({ open, setOpen, slot, refresh }: AppointmentDialogProps) {
   const [name, setName] = useState("");
   const [date, setDate] = useState("");
   const [startTime, setStartTime] = useState("");
@@ -36,16 +29,31 @@ AppointmentDialogProps) {
   const [clinics, setClinics] = useState<Clinic[]>([]);
   const [doctors, setDoctors] = useState<Doctor[]>([]);
 
+  // 🔹 Prefill with slot time or current time
   useEffect(() => {
+    const formatDateLocal = (date: Date) => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    };
+
     if (slot) {
       const start = new Date(slot.start);
       const end = new Date(slot.end);
-      setDate(start.toISOString().split("T")[0]);
+      setDate(formatDateLocal(start)); // ✅ local date, not UTC
       setStartTime(start.toTimeString().slice(0, 5));
       setEndTime(end.toTimeString().slice(0, 5));
+    } else {
+      const now = new Date();
+      const in30 = new Date(now.getTime() + 30 * 60000);
+      setDate(formatDateLocal(now));
+      setStartTime(now.toTimeString().slice(0, 5));
+      setEndTime(in30.toTimeString().slice(0, 5));
     }
-  }, [slot]);
+  }, [slot, open]);
 
+  // 🔹 Load clinics & doctors
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -60,9 +68,16 @@ AppointmentDialogProps) {
     loadData();
   }, []);
 
+  // 🔹 Handle Save
   const handleSave = async () => {
     if (!clinicId || !doctorId || !date || !startTime || !endTime || !name) {
       alert("Please fill in all required fields.");
+      return;
+    }
+
+    const startDateTime = new Date(`${date}T${startTime}`);
+    if (startDateTime < new Date()) {
+      alert("Cannot book an appointment in the past!");
       return;
     }
 
@@ -79,6 +94,7 @@ AppointmentDialogProps) {
       await refresh();
       setOpen(false);
 
+      // Reset form
       setName("");
       setDate("");
       setStartTime("");
@@ -97,6 +113,9 @@ AppointmentDialogProps) {
   };
 
   const filteredDoctors = clinicId ? doctors.filter((doc) => doc.clinicId === clinicId) : doctors;
+
+  const today = new Date().toISOString().split("T")[0];
+  const currentTime = new Date().toTimeString().slice(0, 5);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -119,7 +138,7 @@ AppointmentDialogProps) {
               setClinicId(val === "" ? "" : Number(val));
               setDoctorId("");
             }}
-            className="w-full border rounded p-2 bg-white text-black relative z-50"
+            className="w-full border rounded p-2 bg-white text-black"
           >
             <option value="">Select clinic</option>
             {clinics.map((clinic, index) => (
@@ -153,11 +172,12 @@ AppointmentDialogProps) {
           </select>
         </div>
 
+        {/* Appointment Details */}
         <div className="space-y-4">
           <Input placeholder="Patient Name" value={name} onChange={(e) => setName(e.target.value)} />
-          <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
-          <Input type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)} />
-          <Input type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} />
+          <Input type="date" value={date} min={today} onChange={(e) => setDate(e.target.value)} />
+          <Input type="time" value={startTime} min={date === today ? currentTime : undefined} onChange={(e) => setStartTime(e.target.value)} />
+          <Input type="time" value={endTime} min={startTime} onChange={(e) => setEndTime(e.target.value)} />
         </div>
 
         <DialogFooter className="pt-4">

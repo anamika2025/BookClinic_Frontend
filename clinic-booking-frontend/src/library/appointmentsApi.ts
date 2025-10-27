@@ -17,22 +17,26 @@ export const fetchAvailableSlots = async (filters: { city?: string }) => {
   }
   return response.json();
 };
-
 export const createAppointment = async (appointmentData: AppointmentRequest) => {
-  // const token = localStorage.getItem("abcdef12345");
+  const token = localStorage.getItem("token"); // ✅ Make sure you saved it on login
 
-  const response = await fetch("/api/appointments", {
+  if (!token) {
+    throw new Error("No authentication token found. Please log in again.");
+  }
+
+  const response = await fetch(`/api/appointments/CreateAppointment`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      // Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${token}`, // ✅ Send token
     },
     body: JSON.stringify(appointmentData),
-    credentials: "include",
   });
 
   if (!response.ok) {
-    throw new Error("Failed to create appointment");
+    const text = await response.text();
+    console.error("CreateAppointment Error:", response.status, text);
+    throw new Error(text || "Failed to create appointment");
   }
 
   return await response.json();
