@@ -82,7 +82,7 @@ export default function AppointmentDialog({ open, setOpen, slot, refresh }: Appo
     }
 
     try {
-      await createAppointment({
+      const response = await createAppointment({
         doctorId: Number(doctorId),
         clinicId: Number(clinicId),
         startTime: `${date}T${startTime}`,
@@ -90,6 +90,7 @@ export default function AppointmentDialog({ open, setOpen, slot, refresh }: Appo
         userId: "user123",
         status: "Booked",
       });
+      alert(response.message || "Appointment booked successfully!");
 
       await refresh();
       setOpen(false);

@@ -17,30 +17,17 @@ export const fetchAvailableSlots = async (filters: { city?: string }) => {
   }
   return response.json();
 };
-export const createAppointment = async (appointmentData: AppointmentRequest) => {
-  const token = localStorage.getItem("token"); // ✅ Make sure you saved it on login
 
-  if (!token) {
-    throw new Error("No authentication token found. Please log in again.");
-  }
-
-  const response = await fetch(`/api/appointments/CreateAppointment`, {
+export async function createAppointment(appointmentData: AppointmentRequest) {
+  const res = await fetch(`/api/Appointments/CreateAppointment`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`, // ✅ Send token
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(appointmentData),
   });
 
-  if (!response.ok) {
-    const text = await response.text();
-    console.error("CreateAppointment Error:", response.status, text);
-    throw new Error(text || "Failed to create appointment");
-  }
-
-  return await response.json();
-};
+  if (!res.ok) throw new Error(await res.text());
+  return res.json(); // ✅ returns { message: "Appointment Booked Successfully" }
+}
 
 export const fetchAppointments = async ({ clinicId, doctorId }: { clinicId: number; doctorId: number }) => {
   const response = await fetch(`/api/appointments/${clinicId}/${doctorId}`);
